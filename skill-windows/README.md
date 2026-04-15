@@ -1,8 +1,8 @@
-# CyberArk Expert Skill — Setup Guide
+# CyberArk Expert Skill — Setup Guide (Windows)
 
 ## What This Is
 
-A unified CyberArk skill for Claude Desktop / Claude Code
+A unified CyberArk skill for Claude Desktop / Claude Code on Windows.
 It provides:
 
 - Error code diagnosis with multi-source lookup chain
@@ -15,12 +15,12 @@ It provides:
 ## File Structure
 
 ```
-~/.claude/skills/cyberark-expert/        (after installation)
+%USERPROFILE%\.claude\skills\cyberark-expert\    (after installation)
 ├── SKILL.md                  # The skill definition (main file)
 ├── README.md                 # This file
 ├── tenants.md                # Your CyberArk environments (PVWA URLs, tenant IDs, etc.)
 ├── resolved-issues.md        # Local KB of resolved issues (append-only)
-└── references/               # Detailed operational guides (loaded on demand)
+└── references\               # Detailed operational guides (loaded on demand)
     ├── identity-portal.md    # Identity admin portal: login, navigation, tasks, gotchas
     ├── privilege-cloud-ops.md # Privilege Cloud: users, safes, platforms, API patterns
     └── browser-automation.md # Token extraction, ExtJS interaction patterns
@@ -95,32 +95,78 @@ The agent will read and write `tenants.md` directly.
 - **Multiple tenants:** The agent asks which one you mean.
 - **No tenants:** The agent asks you to provide a URL and offers to save it.
 
-## Installation — Claude Code
+## Installation
+
+### Prerequisites
+
+- **Claude Desktop for Windows** — installed and running
+- **Node.js** — required for Context7 MCP. Download from https://nodejs.org. After installation, verify `npx` is available by running `npx --version` in PowerShell.
 
 ### 1. Install the Skill
 
-Copy the `skill/` folder to your Claude Code skills directory, or symlink it:
+Copy the `skill-windows\` folder to your Claude skills directory.
 
-```bash
+**PowerShell:**
+```powershell
 # Option A: Copy
-cp -r /Users/masko/claude/cyberark-expert/skill ~/.claude/skills/cyberark-expert
+Copy-Item -Path "C:\path\to\cyberark-expert\skill-windows\*" -Destination "$env:USERPROFILE\.claude\skills\cyberark-expert\" -Recurse -Force
 
-# Option B: Symlink
-ln -s /Users/masko/claude/cyberark-expert/skill ~/.claude/skills/cyberark-expert
+# Option B: Create the directory first if it doesn't exist
+New-Item -ItemType Directory -Path "$env:USERPROFILE\.claude\skills\cyberark-expert" -Force
+Copy-Item -Path "C:\path\to\cyberark-expert\skill-windows\*" -Destination "$env:USERPROFILE\.claude\skills\cyberark-expert\" -Recurse -Force
 ```
 
-### 2. Remove Old Skills
+**Command Prompt:**
+```cmd
+xcopy /E /I "C:\path\to\cyberark-expert\skill-windows" "%USERPROFILE%\.claude\skills\cyberark-expert"
+```
+
+### 2. Remove Old Skills (if applicable)
 
 Delete or disable the old `cyberark-supportagent` and `cyberark-identity` skills:
 
-```bash
-rm -rf ~/.claude/skills/cyberark-supportagent
-rm -rf ~/.claude/skills/cyberark-identity
+**PowerShell:**
+```powershell
+Remove-Item -Path "$env:USERPROFILE\.claude\skills\cyberark-supportagent" -Recurse -Force -ErrorAction SilentlyContinue
+Remove-Item -Path "$env:USERPROFILE\.claude\skills\cyberark-identity" -Recurse -Force -ErrorAction SilentlyContinue
 ```
 
 ### 3. Configure MCP Servers (Optional but Recommended)
 
-Add these to your Claude Desktop `claude_desktop_config.json` or Claude Code MCP config:
+Add these to your Claude Desktop `claude_desktop_config.json` or Claude Code MCP config.
+
+#### Finding your config file on Windows
+
+The config file location depends on how Claude Desktop was installed:
+
+**Standard installation (.exe installer):**
+```
+%APPDATA%\Claude\claude_desktop_config.json
+```
+
+**MSIX installation (Microsoft Store, WinGet, enterprise MSIX):**
+```
+%LOCALAPPDATA%\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\claude_desktop_config.json
+```
+
+**Important:** MSIX installations silently redirect `%APPDATA%\Claude\` to the virtualized path above. The "Edit Config" button in Claude Desktop's Developer settings may open the wrong file. If your MCP servers aren't loading after editing the config, check the MSIX path instead.
+
+**To find which path your installation uses, run this in PowerShell:**
+```powershell
+# Check if MSIX virtualized path exists
+$msixPath = "$env:LOCALAPPDATA\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\claude_desktop_config.json"
+$standardPath = "$env:APPDATA\Claude\claude_desktop_config.json"
+
+if (Test-Path $msixPath) {
+    Write-Host "MSIX install detected. Config file at:" -ForegroundColor Yellow
+    Write-Host $msixPath
+} elseif (Test-Path $standardPath) {
+    Write-Host "Standard install detected. Config file at:" -ForegroundColor Green
+    Write-Host $standardPath
+} else {
+    Write-Host "Config file not found at either location." -ForegroundColor Red
+}
+```
 
 #### Context7 — Documentation Fetcher (Highly Recommended)
 
@@ -139,7 +185,7 @@ Provides on-demand access to CyberArk documentation and code examples.
 ```
 
 **Claude Code:**
-```bash
+```powershell
 claude mcp add context7 -- npx -y @upstash/context7-mcp@latest
 ```
 
@@ -161,7 +207,7 @@ For Conjur Cloud secrets management. Requires Identity OAuth2 client setup.
 
 The skill writes to `resolved-issues.md` and `tenants.md` inside its own installation directory. If you have the Filesystem MCP server configured in Claude Desktop, its `args` array must include the skill's parent path — otherwise writes will be rejected with **"path outside allowed directories"**.
 
-Add `~/.claude/skills` (or the full expanded path) to your Filesystem MCP configuration:
+Add your skills directory to your Filesystem MCP configuration:
 
 **Example (`claude_desktop_config.json`):**
 ```json
@@ -170,12 +216,12 @@ Add `~/.claude/skills` (or the full expanded path) to your Filesystem MCP config
   "args": [
     "-y",
     "@anthropic-ai/mcp-filesystem@latest",
-    "/Users/<your-username>/.claude/skills"
+    "C:/Users/<your-username>/.claude/skills"
   ]
 }
 ```
 
-If you already have other allowed directories listed in `args`, just append the skills path as an additional entry — don't remove existing ones.
+**Note:** Use forward slashes (`/`) in the JSON config even on Windows — Node.js and the MCP server handle them correctly. If you already have other allowed directories listed in `args`, just append the skills path as an additional entry — don't remove existing ones.
 
 **Why this is needed:** When you report a CyberArk error and the agent resolves it, the resolution gets appended to `resolved-issues.md` for future reference. Similarly, when you add or update tenants via conversation, the agent writes to `tenants.md`. Both operations require filesystem write access to the skill's installation directory.
 
@@ -221,37 +267,40 @@ Copy the block below and paste it into the appropriate location for your Claude 
 
 The right location depends on which Claude environment you use. You can apply them in multiple places — they don't conflict.
 
-**Claude Code (terminal):**
+**Claude Code (terminal on Windows):**
 
 For rules that apply to ALL your Claude Code projects globally:
 ```
-~/.claude/CLAUDE.md
+%USERPROFILE%\.claude\CLAUDE.md
 ```
 Append the rules block to this file (create it if it doesn't exist). Every Claude Code session on your machine will pick them up automatically.
 
 For rules that apply only to a specific project:
 ```
-<your-project-root>/.claude/CLAUDE.md
+<your-project-root>\.claude\CLAUDE.md
 ```
-Place the rules in the project's `.claude/CLAUDE.md` file. They apply only when Claude Code is run from that project directory. Project-level rules are merged with global rules — project takes precedence if there's a conflict.
+Place the rules in the project's `.claude\CLAUDE.md` file. They apply only when Claude Code is run from that project directory. Project-level rules are merged with global rules — project takes precedence if there's a conflict.
 
 **Cowork (Claude Desktop app — Cowork mode):**
 
-Cowork reads from the `.claude/CLAUDE.md` file inside the folder you select when starting a session. So if you select `/Users/you/my-project/` as your Cowork folder, the rules should be in:
+Cowork reads from the `.claude\CLAUDE.md` file inside the folder you select when starting a session. So if you select `C:\Users\you\my-project\` as your Cowork folder, the rules should be in:
 ```
-/Users/you/my-project/.claude/CLAUDE.md
+C:\Users\you\my-project\.claude\CLAUDE.md
 ```
 
-If you want the rules to apply across multiple Cowork sessions with different folders, you'll need to place a `.claude/CLAUDE.md` in each folder — or keep one master copy and symlink it:
-```bash
+If you want the rules to apply across multiple Cowork sessions with different folders, you'll need to place a `.claude\CLAUDE.md` in each folder — or keep one master copy and create symbolic links:
+
+```powershell
 # Create master rules file
-mkdir -p ~/.claude
-# Add rules to ~/.claude/CLAUDE.md
+New-Item -ItemType Directory -Path "$env:USERPROFILE\.claude" -Force
+# Edit %USERPROFILE%\.claude\CLAUDE.md and add your rules
 
-# Symlink into each project
-ln -s ~/.claude/CLAUDE.md /path/to/project-a/.claude/CLAUDE.md
-ln -s ~/.claude/CLAUDE.md /path/to/project-b/.claude/CLAUDE.md
+# Create symbolic links into each project (requires elevated PowerShell)
+New-Item -ItemType SymbolicLink -Path "C:\path\to\project-a\.claude\CLAUDE.md" -Target "$env:USERPROFILE\.claude\CLAUDE.md"
+New-Item -ItemType SymbolicLink -Path "C:\path\to\project-b\.claude\CLAUDE.md" -Target "$env:USERPROFILE\.claude\CLAUDE.md"
 ```
+
+**Note:** Creating symbolic links on Windows requires running PowerShell as Administrator, or having Developer Mode enabled in Windows Settings.
 
 **Claude.ai (web chat):**
 
@@ -263,9 +312,9 @@ The web chat at claude.ai does not read `CLAUDE.md` files. To apply these rules 
 
 | Environment | File Location | Scope |
 |---|---|---|
-| Claude Code (global) | `~/.claude/CLAUDE.md` | All projects on this machine |
-| Claude Code (project) | `<project>/.claude/CLAUDE.md` | Single project only |
-| Cowork | `<selected-folder>/.claude/CLAUDE.md` | Single Cowork session folder |
+| Claude Code (global) | `%USERPROFILE%\.claude\CLAUDE.md` | All projects on this machine |
+| Claude Code (project) | `<project>\.claude\CLAUDE.md` | Single project only |
+| Cowork | `<selected-folder>\.claude\CLAUDE.md` | Single Cowork session folder |
 | Claude.ai (web) | Project custom instructions | Single project in claude.ai |
 | Claude.ai (web) | Paste at conversation start | Single conversation |
 
@@ -311,3 +360,5 @@ Append to resolved-issues.md for future reference
 - CyberArk documentation pages (docs.cyberark.com) are **client-side rendered** — they return 404 when fetched directly. Use Chrome MCP or browser tools to access them.
 - CyberArk Community search works **without login** for Knowledge Articles. Some Discussions may require authentication.
 - The resolved-issues KB is a single append-only markdown file. Search it by error code, component, or keywords.
+- **Windows MSIX installations** may redirect config file paths silently. If MCP servers don't load, check the MSIX virtualized path (see Section 3 above).
+- **psPAS** is a native PowerShell module — Windows users can use it directly without any additional shell setup.
