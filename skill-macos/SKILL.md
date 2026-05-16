@@ -86,7 +86,7 @@ If the user asks for an action that requires a specific environment but doesn't 
 When a user reports an error code or error message:
 
 ### Step 1: Check Local KB
-Read `/Users/masko/.claude/skills/cyberark-expert/resolved-issues.md` and search for the error code or keywords. If a match is found, present the cached resolution and verify it's still current.
+Read `~/.hermes/skills/cyberark-expert/resolved-issues.md` and search for the error code or keywords. If a match is found, present the cached resolution and verify it's still current.
 
 ### Step 2: Identify the Component
 Use the error code prefix to determine the CyberArk component:
