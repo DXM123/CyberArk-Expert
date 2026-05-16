@@ -492,7 +492,7 @@ Read `references/browser-automation.md` for code snippets when automating portal
 When answering any CyberArk question, follow this priority:
 
 1. **Local resolved-issues KB** — `/Users/masko/.claude/skills/cyberark-expert/resolved-issues.md`
-2. **Official CyberArk documentation** — docs.cyberark.com (use Chrome MCP to fetch)
+2. **Official CyberArk documentation** — docs.cyberark.com (use browser automation to fetch)
 3. **CyberArk Community** — community.cyberark.com Knowledge Articles
 4. **Context7 MCP** — for API docs and code examples
 5. **psPAS / IdentityCommand docs** — for PowerShell automation
