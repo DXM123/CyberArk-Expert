@@ -215,7 +215,7 @@ The search results page has three tabs in the left sidebar:
 - Related Versions
 - Article Record Type
 
-Use Chrome MCP to navigate to search results and read article content. Full KI articles are accessible without login.
+Use the available browser automation or web search integration to navigate, search results and read article content. Full KI articles are accessible without login.
 
 ### Step 5: Web Search Fallback
 
