@@ -15,7 +15,7 @@ This skill provides a structured, source-driven workflow for:
 5. **Platform management** — Privilege Cloud platform operations (duplicate, export/import, activate)
 
 **Golden rules:**
-- ALWAYS check the local resolved-issues KB first: `~/.hermes/skills/cyberark-expert/resolved-issues.md`
+- ALWAYS check the local resolved-issues KB first: `resolved-issues.md`
 - NEVER guess — every answer must have a source URL or explicit "I don't know"
 - If no official source exists, provide a logic chain with Dual Confidence (e.g. ±15%, Medium-High)
 - After resolving any issue, append it to the resolved-issues KB
@@ -27,7 +27,7 @@ This skill provides a structured, source-driven workflow for:
 When a user asks you to perform actions against a CyberArk environment (API calls, browser navigation, account operations, etc.), you need to know **which environment** to target. The user registers their environments in:
 
 ```
-~/.hermes/skills/cyberark-expert/tenants.md
+tenants.md
 ```
 
 ### How it works
@@ -86,7 +86,7 @@ If the user asks for an action that requires a specific environment but doesn't 
 When a user reports an error code or error message:
 
 ### Step 1: Check Local KB
-Read `~/.hermes/skills/cyberark-expert/resolved-issues.md` and search for the error code or keywords. If a match is found, present the cached resolution and verify it's still current.
+Read `resolved-issues.md` and search for the error code or keywords. If a match is found, present the cached resolution and verify it's still current.
 
 ### Step 2: Identify the Component
 Use the error code prefix to determine the CyberArk component:
@@ -126,7 +126,7 @@ Not all CyberArk errors follow the prefix convention. Privilege Cloud, Identity,
 
 ### Step 3: Fetch Official Documentation
 
-Based on the prefix, fetch the corresponding error messages page. Use **Chrome MCP** (not WebFetch — CyberArk docs are client-side rendered and return 404 via direct fetch).
+Based on the prefix, fetch the corresponding error messages page. Use **Browser automation** (not WebFetch — CyberArk docs are client-side rendered and return 404 via direct fetch).
 
 #### PAM Self-Hosted — Digital Vault Server
 
@@ -226,7 +226,7 @@ If official sources and community yield no results, search the web:
 
 ### Step 6: Log the Resolution
 
-After resolving any issue, append to `~/.hermes/skills/cyberark-expert/resolved-issues.md`:
+After resolving any issue, append to `resolved-issues.md`:
 
 ```markdown
 ## [YYYY-MM-DD] <ERROR_CODE> - <short description>
@@ -434,7 +434,7 @@ When the Context7 MCP is configured, use it to pull up-to-date documentation and
 - [Administration](https://docs.cyberark.com/admin-space/latest/en/content/resources/_topnav/cc_home.htm)
 - [Audit](https://docs.cyberark.com/audit/latest/en/content/resources/_topnav/cc_home.htm)
 
-**Important:** CyberArk documentation pages are client-side rendered. Use Chrome MCP to navigate and extract content. WebFetch returns 404 for these URLs.
+**Important:** CyberArk documentation pages are client-side rendered. Use Browser automation (ideally Chrome CDP) to navigate and extract content. WebFetch returns 404 for these URLs.
 
 ---
 
@@ -491,7 +491,7 @@ Read `references/browser-automation.md` for code snippets when automating portal
 
 When answering any CyberArk question, follow this priority:
 
-1. **Local resolved-issues KB** — `~/.hermes/skills/cyberark-expert/resolved-issues.md`
+1. **Local resolved-issues KB** — `resolved-issues.md`
 2. **Official CyberArk documentation** — docs.cyberark.com (use browser automation to fetch)
 3. **CyberArk Community** — community.cyberark.com Knowledge Articles
 4. **Context7 MCP** — for API docs and code examples
