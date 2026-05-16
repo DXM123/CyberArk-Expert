@@ -483,7 +483,7 @@ Read `references/browser-automation.md` for code snippets when automating portal
     }
   }
   ```
-- **Claude Code:** `claude mcp add context7 -- npx -y @upstash/context7-mcp@latest`
+- **Hermes Code:** `hermes mcp add context7 -- npx -y @upstash/context7-mcp@latest`
 
 ---
 
