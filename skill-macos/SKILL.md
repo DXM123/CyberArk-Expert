@@ -15,7 +15,7 @@ This skill provides a structured, source-driven workflow for:
 5. **Platform management** — Privilege Cloud platform operations (duplicate, export/import, activate)
 
 **Golden rules:**
-- ALWAYS check the local resolved-issues KB first: `/Users/masko/.claude/skills/cyberark-expert/resolved-issues.md`
+- ALWAYS check the local resolved-issues KB first: `~/.hermes/skills/cyberark-expert/resolved-issues.md`
 - NEVER guess — every answer must have a source URL or explicit "I don't know"
 - If no official source exists, provide a logic chain with Dual Confidence (e.g. ±15%, Medium-High)
 - After resolving any issue, append it to the resolved-issues KB
@@ -27,7 +27,7 @@ This skill provides a structured, source-driven workflow for:
 When a user asks you to perform actions against a CyberArk environment (API calls, browser navigation, account operations, etc.), you need to know **which environment** to target. The user registers their environments in:
 
 ```
-/Users/masko/.claude/skills/cyberark-expert/tenants.md
+~/.hermes/skills/cyberark-expert/tenants.md
 ```
 
 ### How it works
