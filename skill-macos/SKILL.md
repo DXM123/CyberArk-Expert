@@ -226,7 +226,7 @@ If official sources and community yield no results, search the web:
 
 ### Step 6: Log the Resolution
 
-After resolving any issue, append to `/Users/masko/.claude/skills/cyberark-expert/resolved-issues.md`:
+After resolving any issue, append to `~/.hermes/skills/cyberark-expert/resolved-issues.md`:
 
 ```markdown
 ## [YYYY-MM-DD] <ERROR_CODE> - <short description>
